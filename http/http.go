@@ -72,8 +72,8 @@ func request(method, url string, headers map[string]string, out, payload interfa
 		}
 		response.Body = out
 	} else {
-		// If out hasn't been defined, we return the response body as an string
-		response.Body = string(respBytes)
+		// If out hasn't been defined, we return the response body as bytes
+		response.Body = respBytes
 	}
 
 	response.Code = resp.StatusCode
