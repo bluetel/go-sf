@@ -12,7 +12,7 @@ import (
 type Response struct {
 	Code    int
 	Body    interface{}
-	Headers map[string][]string
+	Headers http.Header
 }
 
 //Request is the
