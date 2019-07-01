@@ -13,7 +13,7 @@ jobs:
       - run:
           name: Run unit tests
           command: |
-            go test ./...
+            go test ./... -coverprofile coverReport.out; go tool cover -func coverReport.out
 
       - save_cache:
           key: go-mod-v4-{{ checksum "go.sum" }}
