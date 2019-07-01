@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"time"
 )
 
 // Response is the type that all the HTTP requests are going to return.
@@ -54,8 +55,9 @@ func do(method string, request Request, out interface{}) (*Response, error) {
 	for k, v := range request.Headers {
 		req.Header.Set(k, v)
 	}
-
-	resp, err := http.DefaultClient.Do(req)
+	client := &http.Client{}
+	client.Timeout = time.Second * time.Duration(10)
+	resp, err := client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("Error doing %s to %s: %v", method, request.URL, err)
 	}
