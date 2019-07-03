@@ -12,8 +12,9 @@ STAGED_FILES=$(git ls-files --full-name | grep ".go$")
 if [[ "$STAGED_FILES" = "" ]]; then
   exit 0
 fi
+
+# Run go lint on the tracked files
 printf "\e[90mRunning golint...\e[0;39m\n"
-# Run go lint on the staged files
 for stagedFile in $STAGED_FILES; do
     # Run golint
     $(golint -set_exit_status $stagedFile)
@@ -29,12 +30,12 @@ if [[ $? != 0 ]]; then
     FAILURE=true
 fi
 
-printf "\e[90mDone! \n"
+# We are done
+printf "\e[90mDone! \e[0;39m\n"
 
 if [[ $FAILURE != false ]]; then
-    printf "\n\e[91mCommit Failed! \n"
+    printf "\n\e[1;91mCommit Failed! \e[0;39m\n"
     exit 1
 fi
-
-printf "\n\e[32mCommit Successful! \n"
+printf "\n\e[1;32mCommit Successful! \e[0;39m\n"
 exit 0
