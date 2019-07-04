@@ -1,4 +1,4 @@
-package http
+package sfhttp
 
 import (
 	"bytes"
@@ -16,7 +16,7 @@ type Response struct {
 	Headers http.Header
 }
 
-//Request is the
+//Request is the struct which defines am http request
 type Request struct {
 	URL     string
 	Headers map[string]string
@@ -48,32 +48,32 @@ func do(method string, request Request, out interface{}) (*Response, error) {
 	// Build the request
 	req, err := http.NewRequest(method, request.URL, bytes.NewBuffer(request.Body))
 	if err != nil {
-		return nil, fmt.Errorf("Error building the %s request for %s: %v", method, request.URL, err)
+		return nil, fmt.Errorf("error building the %s request for %s: %v", method, request.URL, err)
 	}
 
 	// Fill the request with the headers
 	for k, v := range request.Headers {
 		req.Header.Set(k, v)
 	}
-	client := &http.Client{}
-	client.Timeout = time.Second * time.Duration(10)
+	client := &http.Client{
+		Timeout: time.Second * time.Duration(10),
+	}
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("Error doing %s to %s: %v", method, request.URL, err)
+		return nil, fmt.Errorf("error doing %s to %s: %v", method, request.URL, err)
 	}
 	defer resp.Body.Close()
 
 	respBytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, fmt.Errorf("Error reading the response when doiing %s to %s: %v", method, request.URL, err)
+		return nil, fmt.Errorf("error reading the response when doiing %s to %s: %v", method, request.URL, err)
 	}
 
 	// Initialising the response
 	var response Response
 	if out != nil {
-		errJSON := json.Unmarshal(respBytes, out)
-		if errJSON != nil {
-			return nil, fmt.Errorf("Error decoding the response when doiing %s to %s: %v", method, request.URL, err)
+		if json.Unmarshal(respBytes, out) != nil {
+			return nil, fmt.Errorf("error decoding the response when doiing %s to %s: %v", method, request.URL, err)
 		}
 		response.Body = out
 	} else {

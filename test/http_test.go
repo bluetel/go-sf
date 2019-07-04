@@ -1,10 +1,11 @@
-package http
+package test
 
 import (
 	"fmt"
 	"net/http"
 	"testing"
 
+	"github.com/bluetel/go-sf/sfhttp"
 	"github.com/jarcoal/httpmock"
 )
 
@@ -43,7 +44,7 @@ func Test_ResponseWithDefinedObject(t *testing.T) {
 	}
 
 	// WHEN we make the HTTP request
-	resp, err := Get(Request{
+	resp, err := sfhttp.Get(sfhttp.Request{
 		URL:     url,
 		Headers: headers,
 	}, &out)
@@ -87,7 +88,7 @@ func Test_ResponseWithUndefinedObject(t *testing.T) {
 	}
 
 	// WHEN we make the HTTP request without defining the output
-	resp, err := Get(Request{
+	resp, err := sfhttp.Get(sfhttp.Request{
 		URL:     url,
 		Headers: headers,
 	}, nil)
