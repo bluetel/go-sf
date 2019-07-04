@@ -6,19 +6,19 @@ printf "\e[1;93mRunning pre-commit hooks...\e[0;39m \n"
 # Our failure flag
 FAILURE=false
 
-# Get staged go files that we want to run checks on
-STAGED_FILES=$(git ls-files --full-name | grep ".go$")
+# Get tracked go files that we want to run checks on
+TRACKED_FILES=$(git ls-files --full-name | grep ".go$")
 
-if [[ "$STAGED_FILES" = "" ]]; then
+if [[ "$TRACKED_FILES" = "" ]]; then
   printf "\e[90mDone! \e[0;39m\n"
   exit 0
 fi
 
 # Run go lint on the tracked files
 printf "\e[90mRunning golint...\e[0;39m\n"
-for stagedFile in $STAGED_FILES; do
+for trackedFile in $TRACKED_FILES; do
   # Run golint
-  $(golint -set_exit_status $stagedFile)
+  $(golint -set_exit_status $trackedFile)
   if [[ $? != 0 ]]; then
     FAILURE=true
   fi
