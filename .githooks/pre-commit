@@ -1,0 +1,42 @@
+#!/bin/sh
+
+# What are we doing
+printf "\e[1;93mRunning pre-commit hooks...\e[0;39m \n"
+
+# Our failure flag
+FAILURE=false
+
+# Get tracked go files that we want to run checks on
+TRACKED_FILES=$(git ls-files --full-name | grep ".go$")
+
+if [[ "$TRACKED_FILES" = "" ]]; then
+  printf "\e[90mDone! \e[0;39m\n"
+  exit 0
+fi
+
+# Run go lint on the tracked files
+printf "\e[90mRunning golint...\e[0;39m\n"
+for trackedFile in $TRACKED_FILES; do
+  # Run golint
+  $(golint -set_exit_status $trackedFile)
+  if [[ $? != 0 ]]; then
+    FAILURE=true
+  fi
+done
+
+# Run go vet on the entire package, doesn't support single files like lint
+printf "\e[90mRunning go vet...\e[0;39m\n"
+go vet $STAGED_FILES
+if [[ $? != 0 ]]; then
+  FAILURE=true
+fi
+
+# We are done
+printf "\e[90mDone! \e[0;39m\n"
+
+if [[ $FAILURE != false ]]; then
+  printf "\n\e[1;91mCommit Failed! \e[0;39m\n"
+  exit 1
+fi
+printf "\n\e[1;32mCommit Successful! \e[0;39m\n"
+exit 0
